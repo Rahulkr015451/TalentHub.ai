@@ -88,7 +88,7 @@ TalentHub_AI/
 
 <div align="center">
   <!-- Dashboard Screenshot Placeholder -->
-  <img src="https://via.placeholder.com/800x450/1A202C/FFFFFF?text=Dashboard+Overview" alt="Dashboard View" width="80%" />
+  <img src="https://github.com/Rahulkr015451/TalentHub.ai/blob/main/dashboard.png" alt="Dashboard View" width="80%" />
   <p><em>Comprehensive Analytics and Activity Dashboard</em></p>
 
   <!-- AI Copilot Screenshot Placeholder -->
