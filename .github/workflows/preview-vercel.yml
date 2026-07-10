@@ -27,12 +27,11 @@ jobs:
         run: npm run build
 
       - name: Deploy Preview to Vercel
-        uses: vercel/action@v3
+        uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          production: false
 
       - name: Comment PR with Preview URL
         uses: actions/github-script@v7
