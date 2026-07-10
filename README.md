@@ -92,7 +92,7 @@ TalentHub_AI/
   <p><em>Comprehensive Analytics and Activity Dashboard</em></p>
 
   <!-- AI Copilot Screenshot Placeholder -->
-  <img src="https://via.placeholder.com/800x450/2D3748/FFFFFF?text=AI+Career+Copilot" alt="AI Copilot View" width="80%" />
+  <img src="https://github.com/Rahulkr015451/TalentHub.ai/blob/main/AICopilot.png" alt="AI Copilot View" width="80%" />
   <p><em>AI-Powered Career Guidance and Skill Analysis</em></p>
 </div>
 
