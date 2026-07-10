@@ -1,6 +1,5 @@
 <div align="center">
-  <!-- Hero Image Placeholder -->
-  <img src="https://via.placeholder.com/1200x400/000000/FFFFFF?text=TalentHub+AI+-+Next-Gen+Hiring+Platform" alt="TalentHub AI Hero" width="100%" />
+  
 
   # TalentHub AI
   
