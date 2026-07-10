@@ -1,0 +1,75 @@
+# =============================================================================
+# TalentHub AI — Continuous Integration Workflow
+# =============================================================================
+# Runs on every push and pull request targeting the main branch.
+# Validates code quality (lint + types), builds the production bundle, and
+# optionally runs tests if a test script is configured.
+# =============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel any in-progress runs for the same branch/PR to save runner minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint → Type-check → Build
+    runs-on: ubuntu-latest
+
+    # Expose Supabase env vars so `next build` can compile pages that
+    # reference them at build time.  Values are safe placeholder strings;
+    # real secrets should live in GitHub Secrets for deploy workflows.
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_placeholder' }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY || 'sb_secret_placeholder' }}
+
+    steps:
+      # ── 1. Checkout the repository ────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Set up Node.js (LTS) ──────────────────────────────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # Built-in npm cache — hashes package-lock.json automatically.
+          cache: npm
+
+      # ── 3. Install dependencies (clean, reproducible install) ────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 4. Lint — enforce code-quality rules via ESLint ──────────────
+      - name: Run ESLint
+        run: npm run lint
+
+      # ── 5. Type-check — verify TypeScript compiles with zero errors ──
+      - name: Run TypeScript type-check
+        run: npm run type-check
+
+      # ── 6. Tests — run only when a test script is configured ─────────
+      - name: Run tests (if configured)
+        run: |
+          # Check whether a "test" script exists in package.json.
+          # Skip gracefully if it is absent or set to the default placeholder.
+          TEST_SCRIPT=$(node -e "const p=require('./package.json'); console.log(p.scripts?.test || '')")
+          if [ -n "$TEST_SCRIPT" ] && [ "$TEST_SCRIPT" != "echo \"Error: no test specified\" && exit 1" ]; then
+            echo "▶ Running test suite…"
+            npm test
+          else
+            echo "⏭ No test script found — skipping."
+          fi
+
+      # ── 7. Build — create the optimised Next.js production bundle ────
+      - name: Build production bundle
+        run: npm run build
