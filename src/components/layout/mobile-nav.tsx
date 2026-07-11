@@ -19,7 +19,10 @@ export function MobileNav() {
   useEffect(() => {
     const raw = localStorage.getItem("talenthub-session");
     if (raw) {
-      setSession(JSON.parse(raw));
+      const parsedSession = JSON.parse(raw);
+      requestAnimationFrame(() => {
+        setSession(parsedSession);
+      });
     }
   }, []);
 

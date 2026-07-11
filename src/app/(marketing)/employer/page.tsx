@@ -9,14 +9,11 @@ import { Container } from "@/components/shared/container";
 import {
   ArrowRight,
   Sparkles,
-  Shield,
-  Search,
   CalendarCheck,
   TrendingUp,
   Brain,
   Users,
   CheckCircle,
-  Briefcase,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 

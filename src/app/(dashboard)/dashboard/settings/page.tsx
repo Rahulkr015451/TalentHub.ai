@@ -8,13 +8,9 @@ import {
   Sliders,
   Link as LinkIcon,
   Loader2,
-  Mail,
   Lock,
-  Globe,
   Calendar,
   Save,
-  CheckCircle2,
-  ToggleLeft,
   Bell,
   Sparkles,
 } from "lucide-react";
@@ -39,7 +35,6 @@ import { Switch } from "@/components/ui/switch";
 import { PageHeader } from "@/components/shared/page-header";
 import { useToast } from "@/components/shared/toast";
 import { supabase } from "@/lib/supabase/client";
-import type { ProfileRow } from "@/lib/supabase/types";
 
 type SettingsTab = "profile" | "account" | "preferences" | "integrations";
 
@@ -49,7 +44,6 @@ export default function SettingsPage() {
 
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
   const [session, setSession] = useState<{ loggedIn: boolean; email: string; role: string } | null>(null);
-  const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -89,7 +83,9 @@ export default function SettingsPage() {
     if (rawSession) {
       const parsed = JSON.parse(rawSession);
       if (parsed.loggedIn && parsed.email) {
-        setSession(parsed);
+        requestAnimationFrame(() => {
+          setSession(parsed);
+        });
         fetchProfile(parsed.email);
       } else {
         router.push("/login");
@@ -99,7 +95,9 @@ export default function SettingsPage() {
     }
 
     async function fetchProfile(email: string) {
-      setIsLoading(true);
+      requestAnimationFrame(() => {
+        setIsLoading(true);
+      });
       try {
         const { data, error } = await supabase
           .from("profiles")
@@ -109,23 +107,26 @@ export default function SettingsPage() {
 
         if (error) throw error;
         if (data) {
-          setProfile(data);
-          setName(data.name || "");
-          setPhone(data.phone || "");
-          setLocation(data.location || "");
-          setBio(data.bio || "");
-          setUniversity(data.university || "");
-          setDegree(data.degree || "");
-          setGradDate(data.grad_date || "");
-          setGpa(data.gpa || "");
-          setCompany(data.company || "");
-          setRecruiterTitle(data.recruiter_title || "");
-          setGithubConnected(data.github_connected || false);
+          requestAnimationFrame(() => {
+            setName(data.name || "");
+            setPhone(data.phone || "");
+            setLocation(data.location || "");
+            setBio(data.bio || "");
+            setUniversity(data.university || "");
+            setDegree(data.degree || "");
+            setGradDate(data.grad_date || "");
+            setGpa(data.gpa || "");
+            setCompany(data.company || "");
+            setRecruiterTitle(data.recruiter_title || "");
+            setGithubConnected(data.github_connected || false);
+          });
         }
       } catch (err) {
         toast((err as Error).message || "Failed to load profile data", "error");
       } finally {
-        setIsLoading(false);
+        requestAnimationFrame(() => {
+          setIsLoading(false);
+        });
       }
     }
   }, [router, toast]);

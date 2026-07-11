@@ -14,9 +14,6 @@ import {
   X,
   Loader2,
   CalendarRange,
-  ExternalLink,
-  ChevronRight,
-  Sparkles,
   CalendarDays,
   UserCheck,
 } from "lucide-react";
@@ -111,7 +108,9 @@ export default function EmployerInterviewsPage() {
         router.push("/dashboard");
         return;
       }
-      setRole(userRole);
+      requestAnimationFrame(() => {
+        setRole(userRole);
+      });
     } else {
       router.push("/login");
       return;
@@ -120,10 +119,15 @@ export default function EmployerInterviewsPage() {
     // Load interviews from localStorage
     const saved = localStorage.getItem("talenthub-interviews");
     if (saved) {
-      setInterviews(JSON.parse(saved));
+      const parsedSaved = JSON.parse(saved);
+      requestAnimationFrame(() => {
+        setInterviews(parsedSaved);
+      });
     } else {
       localStorage.setItem("talenthub-interviews", JSON.stringify(INITIAL_MOCK_INTERVIEWS));
-      setInterviews(INITIAL_MOCK_INTERVIEWS);
+      requestAnimationFrame(() => {
+        setInterviews(INITIAL_MOCK_INTERVIEWS);
+      });
     }
 
     // Fetch Candidates from Applications
@@ -428,7 +432,7 @@ export default function EmployerInterviewsPage() {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as "upcoming" | "completed" | "cancelled")}
                 className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
                   activeTab === tab.id
                     ? "bg-card text-foreground shadow-2xs"
@@ -462,7 +466,7 @@ export default function EmployerInterviewsPage() {
               </div>
             ) : filteredInterviews.length > 0 ? (
               <div className="divide-y space-y-4">
-                {filteredInterviews.map((item, idx) => (
+                {filteredInterviews.map((item) => (
                   <div
                     key={item.id}
                     className={`flex flex-col md:flex-row md:items-center justify-between gap-4 py-4 first:pt-0 last:pb-0 transition-all`}

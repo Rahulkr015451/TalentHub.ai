@@ -132,7 +132,7 @@ export default function MarketingPage() {
     }
 
     loadLandingData();
-  }, []);
+  }, [router]);
 
   // --- JOB FILTER LOGIC ---
   useEffect(() => {
