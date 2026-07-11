@@ -19,6 +19,7 @@ import {
   Brain,
   TrendingUp,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { getJobs, getCompanies } from "@/lib/supabase/data-access";
 import type { JobRow, CompanyRow } from "@/lib/supabase/types";
@@ -77,6 +78,7 @@ const mapDbCompanyToMarketingCompany = (dbCompany: CompanyRow, allJobs: (JobRow 
 };
 
 export default function MarketingPage() {
+  const router = useRouter();
   // --- STATE DECLARATIONS FIRST (to resolve declaration-order / access-before-declaration bugs) ---
   const [searchQuery, setSearchQuery] = useState("");
   const [searchDept, setSearchDept] = useState("All");
@@ -84,7 +86,7 @@ export default function MarketingPage() {
   const [filteredJobs, setFilteredJobs] = useState<MarketingJob[]>([]);
   const [visibleCount, setVisibleCount] = useState(3);
   
-  const [session, setSession] = useState<{ loggedIn: boolean } | null>(null);
+  const [session, setSession] = useState<{ loggedIn: boolean; role?: string } | null>(null);
   const [allJobs, setAllJobs] = useState<MarketingJob[]>([]);
   const [companies, setCompanies] = useState<MarketingCompany[]>([]);
   const [visibleCompaniesCount, setVisibleCompaniesCount] = useState(3);
@@ -95,8 +97,13 @@ export default function MarketingPage() {
   useEffect(() => {
     const raw = localStorage.getItem("talenthub-session");
     if (raw) {
+      const parsedSession = JSON.parse(raw);
+      if (parsedSession.loggedIn && parsedSession.role === "recruiter") {
+        router.push("/employer");
+        return;
+      }
       requestAnimationFrame(() => {
-        setSession(JSON.parse(raw));
+        setSession(parsedSession);
       });
     } else {
       requestAnimationFrame(() => {

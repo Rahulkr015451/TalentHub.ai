@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
@@ -14,6 +14,19 @@ import { cn } from "@/lib/utils";
 export function MobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const [session, setSession] = useState<{ loggedIn: boolean; role?: string } | null>(null);
+
+  useEffect(() => {
+    const raw = localStorage.getItem("talenthub-session");
+    if (raw) {
+      setSession(JSON.parse(raw));
+    }
+  }, []);
+
+  const navItems = [...MARKETING_NAV_ITEMS];
+  if (!session || !session.loggedIn || session.role !== "recruiter") {
+    navItems.push({ title: "For Employers", href: "/employer" });
+  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -32,7 +45,7 @@ export function MobileNav() {
           {/* Nav Links */}
           <nav className="flex-1 p-4 space-y-1">
             <AnimatePresence>
-              {MARKETING_NAV_ITEMS.map((item, i) => (
+              {navItems.map((item, i) => (
                 <motion.div
                   key={item.href}
                   initial={{ opacity: 0, x: 20 }}

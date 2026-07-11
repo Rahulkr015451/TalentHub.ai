@@ -27,7 +27,7 @@ interface HeaderProps {
 
 export function Header({ variant = "marketing" }: HeaderProps) {
   const pathname = usePathname();
-  const [session, setSession] = useState<{ loggedIn: boolean } | null>(null);
+  const [session, setSession] = useState<{ loggedIn: boolean; role?: string } | null>(null);
 
   useEffect(() => {
     const raw = localStorage.getItem("talenthub-session");
@@ -47,6 +47,13 @@ export function Header({ variant = "marketing" }: HeaderProps) {
     return <DashboardHeader />;
   }
 
+  // Build navigation items list
+  const navItems = [...MARKETING_NAV_ITEMS];
+  // If not logged in or logged in as a candidate, show the "For Employers" option
+  if (!session || !session.loggedIn || session.role !== "recruiter") {
+    navItems.push({ title: "For Employers", href: "/employer" });
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full glass">
       <Container>
@@ -56,7 +63,7 @@ export function Header({ variant = "marketing" }: HeaderProps) {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1">
-            {MARKETING_NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
